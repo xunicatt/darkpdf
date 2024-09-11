@@ -1,0 +1,67 @@
+# Author: xunicatt [https://github.com/xunicatt]
+# Brief: CLI tool to convert normal pdf into dark pdf
+#        darkpdf uses imagemagick to convert pdfs
+
+set -e
+darkpdf_version="v1.0.1"
+imagemagick_weblink="https://imagemagick.org/script/download.php"
+
+convert_to_dark() {
+	printf "[0%%] Input file: %s\n" $in
+	printf "[0%%] Output file: %s\n" $out
+	printf "[0%%] Cache Directory: %s\n" $cache
+
+	#conversion
+	rm -rf $cache
+	mkdir -p $cache
+	printf "[25%%] Converting pdf into images\n"
+	magick -density 300 -quality 100 $in $cache/page_%d.png
+	printf "[50%%] Adjusting images to darkmode\n"
+	mogrify -negate -fill white -colorize 20% $cache/page_*.png
+	printf "[75%%] Converting images into pdf\n"
+	magick $cache/page_*.png $out
+	printf "[100%%] Removing cache files\n"
+	rm $cache/page_*.png
+}
+
+tools=(
+    magick
+    mogrify
+)
+
+for x in "${tools[@]}"
+do
+    if ! command -v $x &> /dev/null
+    then
+        printf "error: %s could not be found\n" $x
+        printf "HINT: download imagemagick: %s\n" $imagemagick_weblink
+        exit 1
+    fi
+done
+
+case $1 in
+	"version")
+    	echo $darkpdf_version
+    	exit 0
+    	;;
+
+	*".pdf")
+    	#file_name
+        filename=$(echo $1 | cut -d "." -f 1)
+        if [[ -z $filename ]]
+        then
+            echo "error: no filename was provided"
+            exit 1
+        fi
+        ext=$(echo $1 | cut -d "." -f 2)
+        in=$(printf "%s.%s" $filename $ext)
+        out=$(printf "%s_dark.%s" $filename $ext)
+        cache=$HOME/.cache/darkpdf
+    	convert_to_dark
+    	;;
+
+	*)
+		echo "usage: darkpdf [ <file>.pdf | version ]"
+		exit 1
+		;;
+esac
