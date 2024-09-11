@@ -1,9 +1,11 @@
-#darkpdf
+# darkpdf
 A minimal cli tool written in Shell Script to convert normal pdf to dark pdf. darkpdf uses imagemagick to convert pdfs.
 
-#Dependencies
+# Dependencies
 - Imagemagick
-Download Imagemagick to use darkpdf
+
+Download Imagemagick to use darkpdf:
+
 [Download](https://imagemagick.org/script/download.php)
 
 - Using Brew:
@@ -21,7 +23,7 @@ sudo dnf install ImageMagick
 sudo apt install imagemagick
 ```
 
-#Install
+# Install
 1. Clone the repo.
 2. cd into it.
 3. Copy the darkpdf script to a directory.
@@ -44,7 +46,7 @@ echo "export PATH=\$PATH:\$HOME/darkpdf" >> ~/.zshrc
 source ~/.zshrc
 ```
 
-#Usage
+# Usage
 ```bash
 $ darkpdf hello.pdf
 ....
